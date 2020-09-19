@@ -48,7 +48,6 @@ void selelct_panel_init() {
 
 /**
 	显示游戏玩家面板
-
 */
 EnumSelectResult show_select_panel() {
 	cleardevice(); // 清空之前显示的内容，避免干扰
@@ -78,12 +77,13 @@ EnumSelectResult show_select_panel() {
 	int temp = 0;
 	// 玩家使用上下键、回车键选择游戏模式
 	while (true) {
-		Sleep(80);
+		Sleep(40);		
 
 		// 在画布上重新绘制玩家游戏模式，避免之前透明贴图的影响
 		BitBlt(canvas_hdc, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, GetImageHDC(&mSelect_player_image), 0, 0, SRCCOPY);
 
 		// 将选择模式的游标进行透明贴图
+		mCounter = mCounter == 0 ? 1 : 0; // 切换现实的游标坦克图片，坦克动态效果
 		TransparentBlt(canvas_hdc, mSelectTankPoint[mSelectIndex].x, mSelectTankPoint[mSelectIndex].y, 16, 16,
 			GetImageHDC(&mSelectTankImage[mCounter]), 0, 0, 16, 16, 0x000000);
 
@@ -91,19 +91,23 @@ EnumSelectResult show_select_panel() {
 		StretchBlt(main_hdc, 0, mSelect_player_image_y, WINDOW_WIDTH, WINDOW_HEIGHT, canvas_hdc, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, SRCCOPY);
 		FlushBatchDraw();
 
-		if (GetAsyncKeyState(VK_UP) & 0x8000) {
+		temp++;
+		if (GetAsyncKeyState(VK_UP) & 0x8000 && temp > 3) {
+			temp = 0;
 			mSelectIndex -= 1;
 			if (mSelectIndex < 0) {
 				mSelectIndex = 2;
 			}
 		}
-		else if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000 && temp > 3) {
+			temp = 0;
 			mSelectIndex += 1;
 			if (mSelectIndex > 2) {
 				mSelectIndex = 0;
 			}
 		}
-		else if (GetAsyncKeyState(VK_RETURN) & 0x8000) {			
+		else if (GetAsyncKeyState(VK_RETURN) & 0x8000 && temp > 3) {
+			temp = 3;
 			break;
 		}
 	}
