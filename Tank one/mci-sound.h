@@ -35,4 +35,4 @@ void CloseSounds();
 /**
 	播放指定编号的音效
 */
-void PlaySounds(int kind);;
+void PlaySounds(int kind);
